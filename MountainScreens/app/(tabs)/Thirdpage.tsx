@@ -1,16 +1,43 @@
-import { Image, StyleSheet, Platform, View, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { Image, StyleSheet, Platform, View, TouchableOpacity, Text, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import React, { useState, useEffect  } from 'react';
+
+const windowWidth = Dimensions.get('window').width;
 
 export default function Thirdpage() {
     const router = useRouter();
+    const [iconPressed, setIconPressed] = useState(false);
+    const [screenWidth, setScreenWidth] = useState(windowWidth);
+
+     useEffect(() => {
+        const updateLayout = () => {
+          setScreenWidth(Dimensions.get('window').width);
+        };
+        
+        Dimensions.addEventListener('change', updateLayout);
+        
+        return () => {
+          
+        };
+      }, []);
+      
+      //screensizes
+      const isSmallScreen = screenWidth < 380;
+      const isMediumScreen = screenWidth >= 380 && screenWidth < 768;
+      const isLargeScreen = screenWidth >= 768;
+      
+     //images
+      const imageWidth = isLargeScreen ? screenWidth * 1.0 : screenWidth * 1.1;
     return (
+      <ScrollView>
        
             <View >
                 <Image
                           source = {require('../../assets/images/Mt Bromo.jpeg')}
                           resizeMode='cover'
-                          style={styles.coverimage}
+                          //style={styles.coverimage}
+                          style={[styles.coverimage, { width: imageWidth }]}
                           
                 />
                 <View style={styles.topImageall}>
@@ -18,14 +45,20 @@ export default function Thirdpage() {
                         9:41
                     </Text>
                         
-                    <View style={styles.topImageIcons}>
+                    <View style={[styles.topImageIcons, { marginLeft: isLargeScreen ? 'auto' : screenWidth * 0.7 }]}>
                       <Ionicons name="cellular" size={20} color="white" />
                       <Ionicons name="wifi-sharp" size={20} color="white" />
                       <Ionicons name="battery-full-sharp" size={20} color="white" />
                     </View>
                 </View>
                 <View style={styles.iconss}>
-                <Ionicons name="chevron-back" size={28} color="white" style={styles.chevron} />
+                  <TouchableOpacity style={styles.chevron} onPress={() => {
+                          setIconPressed(!iconPressed);
+                          router.push('/explore');
+                        }}>
+                        <Ionicons name="chevron-back" size={28} color={iconPressed ? 'red' : 'black'} />
+                  </TouchableOpacity>
+                
                 <Ionicons name="ellipsis-vertical" size={28} color="white" style={styles.ellipsis} />
                 </View>
 
@@ -39,16 +72,20 @@ export default function Thirdpage() {
                         </Text>
                     </View>
                     <View style={styles.time}>
-                       
-                                <Ionicons name="location" size={20} color="white" />
-                                <Text style={styles.description}>
+
+                      <View style={[styles.locationtext, { marginRight: isLargeScreen ? screenWidth * -0.5 : screenWidth * -0.1 }]}>  
+                        <Ionicons name="location" size={20} color="white" />
+                                <Text style={[styles.description, { marginRight: isLargeScreen ? screenWidth * 0.5 : screenWidth * 0.1 }]}>
+                                
                                 East Java, Indonesia (234km)
                         </Text>
-                       
+                      </View>
+                      <View style={styles.timetext}> 
                         <Ionicons name="time" size={20} color="white"  />
                         <Text style={styles.hour}>
                             3h 12m
                         </Text>
+                      </View>
                     </View>
                     <View>
                          <View >
@@ -72,22 +109,24 @@ export default function Thirdpage() {
                         <Text style={styles.people}>199+ people adventure</Text>
                     </View>
                     <Text style={styles.paragraph}>A typical way to visit Mount Bromo is from the nearby mountain village of Cemoro Lawang. From there it is possible to walk to the volcano in about 45 minutes, but it is also possible to take an organized jeep tour.</Text>
-                    <Text style={styles.map}>
-                        See On The Map
-                    </Text>
+                    <TouchableOpacity style={styles.map}>
+                      <Text style={styles.maptext}>See On The Map</Text>
+                       
+                    </TouchableOpacity>
                 </View>
 
                          
 
             </View>
-        
+            </ScrollView> 
         
     );
 }
 const styles = StyleSheet.create({
     coverimage: {
         height: 700,
-        width: 370
+        width: 370,
+        resizeMode: 'cover'
     },
    container: {
     backgroundColor: 'white'
@@ -164,6 +203,11 @@ map: {
     textAlign: 'center',
     marginTop: 10
 },
+maptext: {
+  textAlign: 'center',
+  fontSize: 16
+
+},
 Max: {
     display: 'flex',
     flexDirection: 'row',
@@ -226,7 +270,7 @@ Max: {
   description: {
     fontSize: 16,
     color: 'white',  
-    marginRight: 20
+    marginRight: 50
 
   },
   hour: {
@@ -242,9 +286,20 @@ Max: {
     display: 'flex',
     justifyContent: 'center',
     alignContent: 'center'
-
-  
+  },
+  locationtext: {
+    padding: 2,
+    display: 'flex',
+    flexDirection: 'row',
+    margin: 2
+  },
+  timetext: {
+    padding: 2,
+    display: 'flex',
+    flexDirection: 'row',
+    margin: 2
   }
+  
  
 
     

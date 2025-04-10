@@ -1,25 +1,57 @@
-import { Image, StyleSheet, Platform, View, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { Image, StyleSheet, Platform, View, TouchableOpacity, Text, ScrollView, Pressable, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useRouter } from 'expo-router';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { moderateScale } from 'react-native-size-matters';
+import React, { useState, useEffect } from 'react';
+
+
+const windowWidth = Dimensions.get('window').width;
 
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState('trip');
+  const [screenWidth, setScreenWidth] = useState(windowWidth);
+    
+    
+    useEffect(() => {
+      const updateLayout = () => {
+        setScreenWidth(Dimensions.get('window').width);
+      };
+      
+      
+      Dimensions.addEventListener('change', updateLayout);
+      
+      return () => {
+        
+      };
+    }, []);
+    
+    //screensizes
+    const isSmallScreen = screenWidth < 380;
+    const isMediumScreen = screenWidth >= 380 && screenWidth < 768;
+    const isLargeScreen = screenWidth >= 768;
+
+   //images 
+  const imageWidth = isLargeScreen ? screenWidth * 1.0 : screenWidth * 1.0;
+  
   return (
     <ScrollView style={styles.container} >
       <View style={styles.imageContainer}>
         <Image
           source = {require('../../assets/images/Mt Bromo.jpeg')}
-          style={styles.topImage}
+          //style={styles.topImage}
+          style={[styles.topImage, { width: imageWidth }]}
           resizeMode='cover'
          />
         <View style={styles.topImageall}>
         <Text style={styles.topImageText}>
           9:41
         </Text>
-        <View style={styles.topImageIcons}>
+        <View style={[styles.topImageIcons, {marginLeft: isLargeScreen ? 'auto' : screenWidth * 0.7  }]}>
         <Ionicons name="cellular" size={20} color="white" />
         <Ionicons name="wifi-sharp" size={20} color="white" />
         <Ionicons name="battery-full-sharp" size={20} color="white" />
@@ -30,7 +62,7 @@ export default function HomeScreen() {
         source={require('../../assets/images/TSwift.jpeg')}
         style={styles.middleimage} 
         />
-        <Ionicons name="notifications-outline" size={24} color="white" style={styles.notification}/>
+        <Ionicons name="notifications-outline" size={24} color="white" style={[styles.notification, {marginLeft: isLargeScreen ? screenWidth * 0.8 : screenWidth * 0.6 }]}/>
         </View>
         <View style={styles.topImagedescription}>
         <Text style={styles.bromo}>
@@ -42,7 +74,7 @@ export default function HomeScreen() {
         </Text>
         </View>
         
-      <View style={styles.box}>
+      <View style={[styles.box, { marginLeft: isLargeScreen ? screenWidth * 0.4 : screenWidth * 0.07}]}>
       <View style={styles.box1}>
           <Ionicons name="bus-outline" size={24} color="white" style={styles.bus}/>
         <View>
@@ -80,32 +112,77 @@ export default function HomeScreen() {
       </Text>
       </View>
 
-      <View style={styles.itinerary}>
-        <View style={styles.trip}>
-        <Ionicons name="bag-check-outline" size={24} color="red" />
-        <Text style={styles.triptext}>Trip</Text>
-        </View>
-        <View style={styles.hotel}>
-        <Ionicons name="bed-outline" size={24} color="black" />
-        <Text>Hotel</Text>
-        </View>
-        <View style={styles.train}>
-        <Ionicons name="train-outline" size={24} color="black" />
-        <Text>Train</Text>
-        </View>
-        <View style={styles.flight}>
-        <Ionicons name="airplane-outline" size={24} color="black" />
-        <Text>Flight</Text>
-        </View>
+     
 
-      </View>
+      <View style={styles.itinerary}>
+  <TouchableOpacity
+    style={[
+      styles.trip,
+      activeTab === 'trip' && styles.activeButton
+    ]}
+    onPress={() => setActiveTab('trip')}
+  >
+    <Ionicons
+      name="bag-check-outline"
+      size={24}
+      color={activeTab === 'trip' ? 'red' : 'black'}
+    />
+    <Text style={activeTab === 'trip' ? styles.activeText : styles.inactiveText}>Trip</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={[
+      styles.trip,
+      activeTab === 'hotel' && styles.activeButton
+    ]}
+    onPress={() => setActiveTab('hotel')}
+  >
+    <Ionicons
+      name="bed-outline"
+      size={24}
+      color={activeTab === 'hotel' ? 'red' : 'black'}
+    />
+    <Text style={activeTab === 'hotel' ? styles.activeText : styles.inactiveText}>Hotel</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={[
+      styles.trip,
+      activeTab === 'train' && styles.activeButton
+    ]}
+    onPress={() => setActiveTab('train')}
+  >
+    <Ionicons
+      name="train-outline"
+      size={24}
+      color={activeTab === 'train' ? 'red' : 'black'}
+    />
+    <Text style={activeTab === 'train' ? styles.activeText : styles.inactiveText}>Train</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={[
+      styles.trip,
+      activeTab === 'flight' && styles.activeButton
+    ]}
+    onPress={() => setActiveTab('flight')}
+  >
+    <Ionicons
+      name="airplane-outline"
+      size={24}
+      color={activeTab === 'flight' ? 'red' : 'black'}
+    />
+    <Text style={activeTab === 'flight' ? styles.activeText : styles.inactiveText}>Flight</Text>
+  </TouchableOpacity>
+</View>
 
       <View>
         <Image
         source={require('../../assets/images/lava-jeep-tour.jpeg')}
-        style={styles.lavajeeptour} 
+        //style={styles.lavajeeptour} 
+        style={[styles.lavajeeptour, { width: imageWidth }]}
         />
-        <View style={styles.Mini}>
+        <View style={[styles.Mini,{marginLeft: isLargeScreen ? screenWidth * 0.7 : screenWidth * 0.1  } ]}>
           <Image
           source={require('../../assets/images/TSwift.jpeg')}
           style={styles.miniswift}
@@ -124,14 +201,16 @@ export default function HomeScreen() {
           <Text style={styles.lavajeeptext}>Lava Jeep Tour</Text>
 
         </View>
-        <Ionicons name="heart-circle-outline" size={24} color="white" style={styles.heart}/>
+        <Ionicons name="heart-circle-outline" size={24} color="white" style={[styles.hearty, {marginLeft: isLargeScreen ? screenWidth * 0.7 : screenWidth * 0.08 }]} />
 
         <View style={styles.bromobox}>
         <Image
         source={require('../../assets/images/mt-bromo.jpeg')} 
-        style={styles.mtbromo}
+        //style={styles.mtbromo}
+        style={[styles.mtbromo, { width: imageWidth }]}
         />
-        <View style={styles.Max}>
+        <View 
+        style={[styles.Max, {marginLeft: isLargeScreen ? screenWidth * 0.7 : screenWidth * 0.1  }]}>
           <Image
           source={require('../../assets/images/TSwift.jpeg')}
           style={styles.maxswift}
@@ -145,7 +224,7 @@ export default function HomeScreen() {
           style={styles.maxprincess} 
           />
         </View>
-        <Ionicons name="heart-circle-outline" size={24} color="white" style={styles.hearty}/>
+        <Ionicons name="heart-circle-outline" size={24} color="white" style={[styles.hearty, {marginLeft: isLargeScreen ? screenWidth * 0.7 : screenWidth * 0.08  }]}/>
         </View>
 
       </View>
@@ -290,49 +369,37 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   trip: {
-    backgroundColor: 'black',
+    backgroundColor: 'rgb(189, 166, 166)',
     display: 'flex',
     flexDirection: 'row',
     padding: 10,
     borderRadius: 6,
+    alignItems: 'center',
+    gap: 5
   },
-  triptext: {
+  activeButton: {
+    backgroundColor: 'black'
+
+  },
+  activeText: {
     color: 'white'
 
   },
-  hotel: {
-    backgroundColor: 'rgb(189, 166, 166)',
-    display: 'flex',
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 6
-
+  inactiveText: {
+    color: 'black'
 
   },
-  train: {
-    backgroundColor: 'rgb(189, 166, 166)',
-    display: 'flex',
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 6
-  },
-  flight: {
-    backgroundColor: 'rgb(189, 166, 166)',
-    display: 'flex',
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 6
-  },
+
   lavajeeptour: {
     width: 320,
-    marginLeft: 20,
+    marginLeft: 5,
     marginBottom: 20,
     borderRadius: 10
 
   },
   mtbromo: {
     width: 320,
-    marginLeft: 20,
+    marginLeft: 5,
     marginBottom: 20,
     borderRadius: 10
     
